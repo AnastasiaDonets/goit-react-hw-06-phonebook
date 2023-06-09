@@ -1,8 +1,18 @@
+import { useSelector } from 'react-redux';
+import { getContacts, getFilter } from 'redux/selectors';
 import { ContactListElem } from '../ContactListElem/ContactListElem';
 import PropTypes from 'prop-types';
-import { ContactesList } from './ContactList.styled';
 
-export const ContactList = ({ contacts, filteredContacts, onDelete }) => {
+export const ContactList = () => {
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
+
+  const makeFiltredContacts = () => {
+    return contacts.filter(({ name }) => {
+      return name.toLowerCase().includes(filter.toLowerCase());
+    });
+  };
+
   const makeList = arrey => {
     return arrey.map(({ id, name, number }) => {
       return (
@@ -11,17 +21,12 @@ export const ContactList = ({ contacts, filteredContacts, onDelete }) => {
           contactName={name}
           contactNumber={number}
           contactId={id}
-          contactDelete={onDelete}
         />
       );
     });
   };
 
-  return (
-    <ContactesList>
-      {filteredContacts ? makeList(filteredContacts) : makeList(contacts)}
-    </ContactesList>
-  );
+  return <ul>{makeList(makeFiltredContacts())}</ul>;
 };
 
 ContactList.propTypes = {
